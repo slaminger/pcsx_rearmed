@@ -512,14 +512,35 @@ void pl_timing_prepare(int is_pal)
 void plat_trigger_vibrate(int pad, int low, int high)
 {
    if (!rumble_cb)
+       FILE *file;
       return;
 
    if (in_enable_vibration)
    {
-      rumble_cb(pad, RETRO_RUMBLE_STRONG, high << 8);
-      rumble_cb(pad, RETRO_RUMBLE_WEAK, low ? 0xffff : 0x0);
+            if ((file = fopen("/sys/class/pwm/pwmchip0/pwm0/duty_cycle", "r+"))) {
+               fputs("10", file);
+               fclose(file);
+            } else if ((file = fopen("/sys/class/pwm/pwmchip1/pwm0/enable", "r+"))) {
+               fputs("0", file);
+               fclose(file);
+            } else {
+			   rumbleCallback(0, RETRO_RUMBLE_STRONG, rumbleUp * 0xFFFF / (rumbleUp + rumbleDown));
+			   rumbleCallback(0, RETRO_RUMBLE_WEAK, rumbleUp * 0xFFFF / (rumbleUp + rumbleDown));
+			
    }
-}
+
+         } else {
+                 if ((file = fopen("/sys/class/pwm/pwmchip0/pwm0/duty_cycle", "r+"))) {
+               fputs("1000000", file);
+               fclose(file);
+            } else if ((file = fopen("/sys/class/pwm/pwmchip1/pwm0/enable", "r+"))) {
+               fputs("1", file);
+               fclose(file);
+            } else {
+			   rumbleCallback(0, RETRO_RUMBLE_STRONG, 0);
+			   rumbleCallback(0, RETRO_RUMBLE_WEAK, 0);
+			}
+              }
 
 void pl_update_gun(int *xn, int *yn, int *xres, int *yres, int *in)
 {
