@@ -527,7 +527,8 @@ void plat_trigger_vibrate(int pad, int low, int high)
 			   rumbleCallback(0, RETRO_RUMBLE_STRONG, rumbleUp * 0xFFFF / (rumbleUp + rumbleDown));
 			   rumbleCallback(0, RETRO_RUMBLE_WEAK, rumbleUp * 0xFFFF / (rumbleUp + rumbleDown));
 			
-   }
+                        }
+                 }
 
          } else {
                  if ((file = fopen("/sys/class/pwm/pwmchip0/pwm0/duty_cycle", "r+"))) {
